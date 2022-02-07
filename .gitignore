@@ -12,3 +12,6 @@ manual/libcaf_core
 manual/libcaf_io
 manual/libcaf_openssl
 release.txt
+/.vs
+/out/
+/CMakeSettings.json

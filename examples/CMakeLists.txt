@@ -85,6 +85,10 @@ if(TARGET CAF::io)
   endif()
 
   if(CAF_ENABLE_QT6_EXAMPLES)
+    if (CMAKE_VERSION VERSION_LESS 3.8)
+      message(STATUS "Note: build fails if Qt6 sets incompatible -std=ARG flag")
+    endif()
+
     find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
     qt6_wrap_ui(GROUP_CHAT_UI_HDR qtsupport/chatwindow.ui)
     qt6_wrap_cpp(GROUP_CHAT_MOC_SRC qtsupport/chatwidget.hpp)
@@ -106,12 +110,32 @@ if(TARGET CAF::io)
                                ${Qt6Core_INCLUDE_DIRS}
                                ${Qt6Gui_INCLUDE_DIRS}
                                ${Qt6Widgets_INCLUDE_DIRS})
-    if (CMAKE_VERSION VERSION_LESS 3.8)
-      message(STATUS "Note: build fails if Qt6 sets incompatible -std=ARG flag")
-    else()
-      set_property(TARGET qt_group_chat PROPERTY CXX_STANDARD 17)
-    endif()
+
+    set_property(TARGET qt_group_chat PROPERTY CXX_STANDARD 17)
     add_dependencies(qt_group_chat all_examples)
+  endif()
+
+  if(CAF_ENABLE_QT5_EXAMPLES)
+    find_package(Qt5 5 REQUIRED COMPONENTS Widgets)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTOUIC ON)
+
+    add_executable(caf-qt-issue-973
+                   caf-qt-issue-973/main.cpp
+                   caf-qt-issue-973/main_window.cpp)
+    target_link_libraries(caf-qt-issue-973
+                          CAF::io
+                          CAF::internal
+                          Qt5::Widgets)
+    target_include_directories(caf-qt-issue-973 PRIVATE
+                               caf-qt-issue-973
+                               ${CMAKE_CURRENT_BINARY_DIR}
+                               ${Qt5Core_INCLUDE_DIRS}
+                               ${Qt5Gui_INCLUDE_DIRS}
+                               ${Qt5Widgets_INCLUDE_DIRS})
+
+    set_property(TARGET caf-qt-issue-973 PROPERTY CXX_STANDARD 17)
+    add_dependencies(caf-qt-issue-973 all_examples)
   endif()
 
   if(CAF_ENABLE_CURL_EXAMPLES)

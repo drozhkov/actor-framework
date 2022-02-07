@@ -6,6 +6,8 @@
 
 #include <cstring>
 #include <numeric>
+#include <stdexcept>
+#include <iostream>
 
 #include "caf/detail/meta_object.hpp"
 #include "caf/error.hpp"
@@ -27,6 +29,13 @@ message_data::~message_data() noexcept {
   auto ptr = storage();
   if (constructed_elements_ == types_.size()) {
     for (auto id : types_) {
+      if (id >= gmos.size()) {
+        // CAF_RAISE_ERROR(std::range_error, "range_error");
+
+        std::cout << "id >= gmos.size()" << std::endl;
+        std::quick_exit(-1);
+      }
+
       auto& meta = gmos[id];
       meta.destroy(ptr);
       ptr += meta.padded_size;

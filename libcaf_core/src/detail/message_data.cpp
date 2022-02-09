@@ -28,7 +28,7 @@ message_data::~message_data() noexcept {
   if (constructed_elements_ == types_.size()) {
     for (auto id : types_) {
       if (id >= gmos.size()) {
-        CAF_RAISE_ERROR(std::range_error, "range_error");
+        CAF_CRITICAL("global_meta_objects index out of range");
       }
 
       auto& meta = gmos[id];
